@@ -1,0 +1,165 @@
+-- 汉化脚本
+-- 自动生成的汉化脚本
+
+local Translations = {["Guesting Hub v1.8"] = "访客中心v1.8",
+    ["Give Suggestions (SHUTDOWN)"] = "给出建议（关闭）",
+    ["Auto Block"] = "自动拦截",
+    ["Ping checkerPing"] = "检查器",
+    ["Ping infoPing"] = "信息",
+    ["Recommendation"] = "推荐",
+    ["if green = all perfect for auto block, If yellow = mid still good, If red = Might Delay"] = "如果绿色=完全适合自动阻止，如果黄色=中等仍然良好，如果红色=可能延迟",
+    ["I usually prefer U SHOULD try using 13 or 10"] = "我通常更倾向于使用13或10",
+    ["Range Distance to Detect"] = "检测距离",
+    ["Aimlock MethodAimlock"] = "方法",
+    ["Auto Punch"] = "自动插入",
+    ["Range Visualizer"] = "测距仪",
+    ["Recommend - USE character-lock or Cam+Char lock (if I fixed still some bugs but u can use it)"] = "推荐-使用字符锁或凸轮+字符锁（如果我仍然修复了一些错误，但你可以使用它）",
+    ["Character"] = "性格",
+    ["Character-lock"] = "字符锁",
+    ["Camera+char lock"] = "摄像头+字符锁",
+    ["- USE character-lock or-"] = "使用字符锁或",
+    ["Camera-lock"] = "摄像头锁",
+    ["Infinite Stamina"] = "无限体力",
+    ["Chance AIMBOT"] = "机会自描（不好用）",
+    ["adjust them as u like : D"] = "根据您的喜好进行调整：D",
+    ["Chance boommm"] = "机会boommm",
+    ["Distance"] = "距离",
+    ["Shedlekey AimbotShedlekey Aimbot"] = "英雄梦出品",
+    ["Distance 1-10"] = "距离1-10",
+    ["Shedlekey"] = "谢德自己砍",
+    ["Rotation Speed ( Limit: 90-150)"] = "转速（限制：90-150）",
+    ["Prediction (Limit:"] = "预测（极限：",
+    ["Aimlock Duration ( Limit:: 1-2.2)"] = "锁定持续时间（限制：1-2.2）",
+    ["Distance (Limit:"] = "距离（限制：",
+    ["Anti 1x1x1x1's Popup"] = "自动关闭1×4弹窗",
+    ["Generators ESP"] = "发动机 透视",
+    ["Items ESP"] = "透视项目",
+    ["Killers ESP"] = "透视杀手",
+    ["Survivors ESP"] = "幸存者透视",
+    ["Puzzle Cooldown"] = "多久弄完一次电机项目",
+    ["Auto Generator puzzle"] = "自动发电机拼图",
+    ["Facing Check"] = "正面检查",
+    ["Report Bugs (api is broken not working)"] = "报告Bug（api损坏无法工作）",
+    ["Aimbots"] = "这我也不知道是啥",
+    ["Player"] = "玩家",
+    ["Auto"] = "自动",
+    ["By-Veux Make sure your Ping Is below 160 This is just V1 so u may encounter Bugs !?!? ALSO FOR COOLKID u need -100 ping btw"] = "通过Veux确保你的Ping低于160这只是V1，所以你可能会遇到Bug！？！？对于COOLKID，您还需要-100平btw",
+    ["Suggestions"] = "建议",
+    ["Added Shedlekey Aimbot added chance Aimbot and Added anti 1x1x1x1's Popup.. I will be adding other etc later :D"] = "添加Shedlekey Aimbot添一加了机会Aimbot并添加了反1x1x1x1的弹出窗口。.我稍后会添加其他等：D",
+    ["Updates"] = "更新",
+    ["Latest Updates"] = "最新动态",
+    ["By Veux"] = "通过Veux",
+    ["Search"] = "搜索",
+    }
+
+local function translateText(text)
+    if not text or type(text) ~= "string" then return text end
+    
+    if Translations[text] then
+        return Translations[text]
+    end
+    
+    for en, cn in pairs(Translations) do
+        if text:find(en) then
+            return text:gsub(en, cn)
+        end
+    end
+    
+    return text
+end
+
+local function setupTranslationEngine()
+    local success, err = pcall(function()
+        local oldIndex = getrawmetatable(game).__newindex
+        setreadonly(getrawmetatable(game), false)
+        
+        getrawmetatable(game).__newindex = newcclosure(function(t, k, v)
+            if (t:IsA("TextLabel") or t:IsA("TextButton") or t:IsA("TextBox")) and k == "Text" then
+                v = translateText(tostring(v))
+            end
+            return oldIndex(t, k, v)
+        end)
+        
+        setreadonly(getrawmetatable(game), true)
+    end)
+    
+    if not success then
+        warn("元表劫持失败:", err)
+       
+        local translated = {}
+        local function scanAndTranslate()
+            for _, gui in ipairs(game:GetService("CoreGui"):GetDescendants()) do
+                if (gui:IsA("TextLabel") or gui:IsA("TextButton") or gui:IsA("TextBox")) and not translated[gui] then
+                    pcall(function()
+                        local text = gui.Text
+                        if text and text ~= "" then
+                            local translatedText = translateText(text)
+                            if translatedText ~= text then
+                                gui.Text = translatedText
+                                translated[gui] = true
+                            end
+                        end
+                    end)
+                end
+            end
+            
+            local player = game:GetService("Players").LocalPlayer
+            if player and player:FindFirstChild("PlayerGui") then
+                for _, gui in ipairs(player.PlayerGui:GetDescendants()) do
+                    if (gui:IsA("TextLabel") or gui:IsA("TextButton") or gui:IsA("TextBox")) and not translated[gui] then
+                        pcall(function()
+                            local text = gui.Text
+                            if text and text ~= "" then
+                                local translatedText = translateText(text)
+                                if translatedText ~= text then
+                                    gui.Text = translatedText
+                                    translated[gui] = true
+                                end
+                            end
+                        end)
+                    end
+                end
+            end
+        end
+        
+        local function setupDescendantListener(parent)
+            parent.DescendantAdded:Connect(function(descendant)
+                if descendant:IsA("TextLabel") or descendant:IsA("TextButton") or descendant:IsA("TextBox") then
+                    task.wait(0.1)
+                    pcall(function()
+                        local text = descendant.Text
+                        if text and text ~= "" then
+                            local translatedText = translateText(text)
+                            if translatedText ~= text then
+                                descendant.Text = translatedText
+                            end
+                        end
+                    end)
+                end
+            end)
+        end
+        
+        pcall(setupDescendantListener, game:GetService("CoreGui"))
+        local player = game:GetService("Players").LocalPlayer
+        if player and player:FindFirstChild("PlayerGui") then
+            pcall(setupDescendantListener, player.PlayerGui)
+        end
+        
+        while true do
+            scanAndTranslate()
+            task.wait(3)
+        end
+    end
+end
+
+task.wait(2)
+
+setupTranslationEngine()
+
+local success, err = pcall(function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/LolnotaKid/project/refs/heads/main/AutoBLOCKKKWAHV1"))()
+end)
+
+if not success then
+    warn("加载失败:", err)
+end
